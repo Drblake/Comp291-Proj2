@@ -26,7 +26,7 @@ def main():
 #
         # Waring if no arguments are used
         if(len(sys.argv) != 2):
-                print("Waring: Arguments not properly specified!")
+                print("Warning: Arguments not properly specified!")
                 print("First argument creates specifies database type (btree/hash/indexfile.")
                 print("Quitting")
                 sys.exit(10)
