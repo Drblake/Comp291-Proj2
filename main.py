@@ -62,7 +62,7 @@ Please Select from the following:
 
                 if choice == 1:
                         print("Creating/Populating Database")
-                        create()
+                        create(5,10000000,"FILE POSITION HERE")
                 elif choice == 2:
                         print("Retrieving Records with Key:")
                         key()
@@ -85,14 +85,62 @@ Please Select from the following:
 #        sql.close()  # clean up sql object
 
 
-def create():
+def create(length, seed, File):
+	#MAY NEED MULTIPLE FOR MULTIPLE TYPES?????
+	try:
+		db = bsddb.btopen(File, "w")
+	except:
+		print("No database found, creating new database")
+		db = bsddb.btopen(File, "c")
+
+	random.seed(seed)
+
+	for value in range(length):
+		key_range = integer_generator()
+		new_key = ""
+		new_value = ""
+		for increment in range(key_range):
+			new_key += str(char_generator())
+		for increment in range(key_range):
+			new_key += str(char_generator())
+		print("KEY: ", new_key, "\n")
+		print("VALUE: ", new_value, "\n")
+		print("\n")
+		new_key = new_key.encode(encoding ='UTF-8')
+		new_value = new_value.encode(encoding = 'UTF-8')
+		
+		if database = 1:
+			db[new_key] = new_value
+
+		elif database = 2:
+			db[new_key] = new_value
+
+		else:
+			db[new_key] = new_value
+	if database = 1:
+		try:
+			db.close()
+			print("B-Tree Populated Successfully")
+		except Exception as Error:
+			print(Error)
+
+	elif database = 2:
+		try:
+			db.close()
+			print("Hash Table Populated Successfully")
+		except Exception as Error:
+			print(Error)
+
+	else:
+		try:
+			db.close()
+			print("Index File Populated Succesfully")
+		except Exception as Error:
+			print(Error)
+
 
 
 def key():
-    
-
-
-
 
 def data():
 
@@ -106,6 +154,10 @@ def destroy():
 
 def getTime():
     
+def integer_generator():
+        return random.randint(64,127)
+def char_generator():
+	return chr(random.randint(97,122))
 
 
 
