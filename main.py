@@ -1,7 +1,8 @@
 import sys
 import getpass
 import sql as sqlFile
-import bsddb3 as db
+import bsddb3 as bsddb
+import os
 
 # This will display the menu and handle input to the menu
 # after creating/population tables.
@@ -30,9 +31,22 @@ def main():
                 print("Quitting")
                 sys.exit(10)
     
-        DATABASE = "cstudents.db"
-        if(argv[1].lower() is "btree"):
-            db = db.btopen(DATABASE, 'c')
+        DATABASE = "tmp/sbaergen_db"
+        if not os.path.exists("tmp/"):
+            os.makedirs("tmp/") 
+        if(str(sys.argv[1]).lower() == "btree"):
+            db = bsddb.btopen(DATABASE, 'c')
+        
+        elif(str(sys.argv[1]).lower() == "hash"):
+            db = bsddb.hashopen(DATABASE, 'c')
+
+        elif(str(sys.argv[1]).lower() == "indexfile"):
+            #TODO
+            pass
+        else:
+            print("Invalid Argument. Please try again!")
+            print(str(sys.argv[1]).lower())
+            sys.exit(10)
         
     # Drop & Create Tables
 #        if(len(sys.argv) >= 2):
@@ -82,31 +96,27 @@ Please Select from the following:
                 else:
                         print ("Invalid Input!")
 
-#        sql.close()  # clean up sql object
-
 
 def create():
-
+    return
 
 def key():
-    
-
-
-
+    return
 
 def data():
-
+    return
 # Get Range of data
 def keyRange():
-
+    return
 
 # Destroy database, Clear Answer
 def destroy():
-
+    return
 
 def getTime():
-    
+    return
 
-
+def finish():
+    return
 
 main()  # run the main function
