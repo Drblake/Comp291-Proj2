@@ -7,10 +7,9 @@ import os
 # after creating/population tables.
 def main():
     if(len(sys.argv) != 2):
-        print("Warning: Arguments not properly specified!")
-        print("First argument creates specifies database type (btree/hash/indexfile.")
-        print("Quitting")
-        sys.exit(10)
+        sys.exit("Warning: Arguments not properly specified!\n" + \
+        "First argument creates specifies database type (btree/hash/indexfile).\n" + \
+        "Quitting.")
 
     db = open_db()
     try:
@@ -163,9 +162,7 @@ def open_db():
         #TODO
         pass
     else:
-        print("Invalid Argument. Please try again!")
-        print(str(sys.argv[1]).lower())
-        sys.exit(10)
+        sys.exit("Invalid Argument. Please try again!\n" + str(sys.argv[1]).lower())
 
     print("")  # put some space between info above and start of menu
     return db
