@@ -1,7 +1,5 @@
 import sys
 import random
-import getpass
-import sql as sqlFile
 import bsddb3 as bsddb
 import os
 
@@ -31,7 +29,7 @@ Please Select from the following:
         5:Destroy Database
         6:Quit""")
         
-        choice = sqlFile.getNumber("Choice (1-6): ",1,1, 6, 1)
+        choice = getNumber("Choice (1-6): ",1,1, 6, 1)
 
         if choice == 1:
             print("Creating/Populating Database")
@@ -172,4 +170,34 @@ def open_db():
     print("")  # put some space between info above and start of menu
     return db
  
-main()  # run the main function
+# from sql.py in proj1
+def getNumber(message, maxLen = None, minLen = 0, maxValue = None, minValue = None):
+    number = None
+    while(True):
+        try:
+            number = eval(input(message))
+        except:
+            print("Invalid input, try again.")
+            continue
+        length = len(str(number))
+        if maxLen is not None:
+            if length > maxLen:
+                print("Number length too long, try again.")
+                continue
+        if minLen is not None:
+            if length < minLen:
+                print("Number length too short, try again.")
+                continue
+        if maxValue is not None:
+            if number > maxValue:
+                print("Value too large, try again.")
+                continue
+        if minValue is not None:
+            if number < minValue:
+                print("Value too small, try again.")
+                continue
+        return number
+
+# only want the main function called if this is the main file
+if __name__ == "__main__":
+    main()
