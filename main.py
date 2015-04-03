@@ -14,11 +14,11 @@ def main():
     db = open_db()
     try:
         answer = open("answers", 'w')
-    except Exception as Error:
-        print(Error)
+    except Exception as e:
+        print(e)
 
     while(True):
-        print (
+        print(
 """----------------------------------------
 Please Select from the following:
         1:Create and Populate Database
@@ -28,11 +28,11 @@ Please Select from the following:
         5:Destroy Database
         6:Quit""")
         
-        choice = getNumber("Choice (1-6): ",1,1, 6, 1)
+        choice = getNumber("Choice (1-6): ", 1, 1, 6, 1)
 
         if choice == 1:
             print("Creating/Populating Database")
-            create(10000,10000000, db)
+            create(10000, 10000000, db)
         elif choice == 2:
             print("Retrieving Records with Key:")
             key(db, answer)
@@ -51,7 +51,7 @@ Please Select from the following:
         else:
             print ("Invalid Input!")
     db.close()
-    os.remove("tmp/sbaergen_db")
+    os.remove("tmp/sbaergen_db")  # TODO: what happens if the file is already removed?
     answer.close()
     
 def create(length, seed, db):
@@ -85,10 +85,10 @@ def key(db, answer):
         answer.write(data.decode(encoding = 'UTF-8') + '\n')
         answer.write('\n')
         return
-    except Exception as error:
-        print(error)
+    except Exception as e:
+        print(e)
         print("Key does not exist")
-    return
+
 
 def data(db, answer):
     search_data = input("Enter the data you wish to search for: ")
@@ -99,11 +99,10 @@ def data(db, answer):
                 answer.write(key.decode(encoding ='UTF-8') + '\n')
                 answer.write(search_data.decode(encoding = 'UTF-8') + '\n')
                 answer.write('\n')
-    except Exception as error:
-        print(error)
+    except Exception as e:
+        print(e)
         print("Data does not exist")
 
-    return
 
 # Get Range of data
 def keyRange(db, answer):
@@ -124,14 +123,13 @@ def keyRange(db, answer):
                 print(count)
         print("Result Recorded")
         return 
-    except Exception as error:
-        print(error)
+    except Exception as e:
+        print(e)
         print("Key does not exist")
     
-    return
 
 # Destroy database, Clear Answer
-def destroy(db):
+def destroy(db):  # TODO: destroy? why are we returning a new db then?
     db.close()
     db = open_db()
     return db
@@ -145,7 +143,7 @@ def char_generator():
     return chr(random.randint(97,122))
 
 def open_db():
-    DATABASE = "tmp/sbaergen_db"
+    DATABASE = "tmp/sbaergen_db"  #TODO: why is the db name fixed?
     if not os.path.exists("tmp/"):
         os.makedirs("tmp/") 
     if(str(sys.argv[1]).lower() == "btree"):     
@@ -159,7 +157,7 @@ def open_db():
         except:
             db = bsddb.hashopen(DATABASE, 'c')
     elif(str(sys.argv[1]).lower() == "indexfile"):
-        #TODO
+        #TODO finish berkely db open
         pass
     else:
         sys.exit("Invalid Argument. Please try again!\n" + str(sys.argv[1]).lower())
