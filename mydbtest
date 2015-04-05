@@ -1,0 +1,3 @@
+#!/bin/bash
+echo "Starting up shell script with the argument:" $1
+python3 main.py $1
