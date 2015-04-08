@@ -122,8 +122,8 @@ def keyRange(db, answer):
     search_key_max = search_key_max.encode(encoding ='UTF-8')
     count = 0
     try:
-        for key in db:
-            if key > search_key_min and key < search_key_max:
+        for key in db:  # inclusive key range search
+            if key >= search_key_min and key =< search_key_max:
                 count+=1
                 solution_key = key
                 solution_data = db[solution_key]
