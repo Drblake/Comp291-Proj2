@@ -63,18 +63,17 @@ Please Select from the following:
     db.close()
     os.remove("tmp/sbaergen_db")  # TODO: what happens if the file is already removed?
     answer.close()
+
     
 def create(length, seed, db):
     random.seed(seed)
 
     for value in range(length):
-        key_range = integer_generator()
-        value_range = integer_generator()
         new_key = ""
         new_value = ""
-        for increment in range(key_range):
+        for increment in range(integer_generator()):
             new_key += str(char_generator())
-        for increment in range(value_range):
+        for increment in range(integer_generator()):
             new_value += str(char_generator())
         try:
             Data = db[new_key]
@@ -116,14 +115,12 @@ def data(db, answer):
 
 # Get Range of data
 def keyRange(db, answer):
-    search_key_min = input("Enter the minimum key value you wish to search for: ")       
-    search_key_max = input("Enter the maximum key value you wish to search for: ")        
-    search_key_min = search_key_min.encode(encoding ='UTF-8')
-    search_key_max = search_key_max.encode(encoding ='UTF-8')
+    search_key_min = input("Enter the minimum key value you wish to search for: ").encode(encoding ='UTF-8')
+    search_key_max = input("Enter the maximum key value you wish to search for: ").encode(encoding ='UTF-8')
     count = 0
     try:
         for key in db:  # inclusive key range search
-            if key >= search_key_min and key =< search_key_max:
+            if key >= search_key_min and key <= search_key_max:
                 count+=1
                 solution_key = key
                 solution_data = db[solution_key]
@@ -144,10 +141,14 @@ def destroy(db):  # TODO: destroy? why are we returning a new db then?
     db = open_db()
     return db
     
+
 def integer_generator():
     return random.randint(64,127)
+
+
 def char_generator():
     return chr(random.randint(97,122))
+
 
 def open_db():
     DATABASE = "tmp/sbaergen_db"
@@ -181,6 +182,7 @@ def open_db():
     print("")  # put some space between info above and start of menu
     return db
  
+
 # from sql.py in proj1
 def getNumber(message, maxLen = None, minLen = 0, maxValue = None, minValue = None):
     number = None
@@ -208,6 +210,7 @@ def getNumber(message, maxLen = None, minLen = 0, maxValue = None, minValue = No
                 print("Value too small, try again.")
                 continue
         return number
+
 
 # only want the main function called if this is the main file
 if __name__ == "__main__":
