@@ -1,4 +1,5 @@
 import sys
+import datetime
 import random
 import bsddb3 as bsddb
 import os
@@ -35,13 +36,22 @@ Please Select from the following:
             create(10000, 10000000, db)
         elif choice == 2:
             print("Retrieving Records with Key:")
+            start = datetime.datetime.now()
             key(db, answer)
+            end = datetime.datetime.now()
+            print(end - start)
         elif choice == 3:
             print("Retrieving Records with Data:")
+            start = datetime.datetime.now()
             data(db, answer)
+            end = datetime.datetime.now()
+            print(end - start)
         elif choice == 4:
             print("Retrieving Records with Key Range:")
+            start = datetime.datetime.now()
             keyRange(db, answer)
+            end = datetime.datetime.now()
+            print(end - start)
         elif choice == 5:
             print("Destroying Database")
             db = destroy(db)
@@ -120,7 +130,7 @@ def keyRange(db, answer):
                 answer.write(solution_key.decode(encoding ='UTF-8') + '\n')
                 answer.write(solution_data.decode(encoding = 'UTF-8') + '\n')
                 answer.write('\n')
-                print(count)
+        print("Number of records found is: " + str(count))
         print("Result Recorded")
         return 
     except Exception as e:
@@ -143,7 +153,7 @@ def char_generator():
     return chr(random.randint(97,122))
 
 def open_db():
-    DATABASE = "tmp/sbaergen_db"  #TODO: why is the db name fixed?
+    DATABASE = "tmp/sbaergen_db"
     if not os.path.exists("tmp/"):
         os.makedirs("tmp/") 
     if(str(sys.argv[1]).lower() == "btree"):     
