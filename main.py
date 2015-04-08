@@ -143,9 +143,6 @@ def destroy(db):  # TODO: destroy? why are we returning a new db then?
     db.close()
     db = open_db()
     return db
-
-def getTime():
-    return
     
 def integer_generator():
     return random.randint(64,127)
