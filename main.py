@@ -165,7 +165,16 @@ def open_db():
             db = bsddb.hashopen(DATABASE, 'c')
     elif(str(sys.argv[1]).lower() == "indexfile"):
         #TODO finish berkely db open
-        pass
+        try:
+            db_P = bsddb.indexopen(DATABASE, 'w')
+        except:
+            dp_P = bsddb.indexfile(DATABASE, 'c')
+        try:
+            db_S = bsddb.indexopen(DATABASE, 'w')
+        except:
+            dp_S = bsddb.indexfile(DATABASE, 'c')
+        
+
     else:
         sys.exit("Invalid Argument. Please try again!\n" + str(sys.argv[1]).lower())
 
