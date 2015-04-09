@@ -12,7 +12,6 @@ def main():
         "First argument creates specifies database type (btree/hash/indexfile).\n" + \
         "Quitting.")
 
-    db_P, db_S = open_db()
     try:
         answer = open("answers", 'w')
     except Exception as e:
@@ -34,7 +33,7 @@ Please Select from the following:
 
         if choice == 1:
             print("Creating/Populating Database")
-            create(10000, 10000000, db_P, db_S)
+            db_P, db_S = create(100000, 10000000)
 
         elif choice == 2:
             print("Retrieving Records with Key:")
@@ -58,16 +57,28 @@ Please Select from the following:
     db_P.close()
     if db_S is not None:
         db_S.close()
-    os.remove("tmp/sbaergen_db")  # TODO: what happens if the file is already removed?
-    answer.close()
-
+        try:
+            os.remove("tmp/sbaergen_db2")
+        except:
+            print("Error removing secondary database")
+    try:
+        os.remove("tmp/sbaergen_db")  # TODO: what happens if the file is already removed?
+    except:
+        print("Error removing primary database")
+    try:
+        answer.close()
+    except:
+        print("Error closing answer file")
     
 # TODO: Should we be creating the databases in this function?
-def create(length, seed, db_P, db_S):
+def create(length, seed):
+    db_P, db_S = open_db()
+    start = datetime.datetime.now()
     random.seed(seed)
     new_value = None
     new_key = None
-    for value in range(length):
+    count = 0
+    while count < length:
         new_key = ""
         new_value = ""
 
@@ -76,11 +87,15 @@ def create(length, seed, db_P, db_S):
 
         for increment in range(integer_generator()):
             new_value += str(char_generator())
+        
         new_key = new_key.encode(encoding ='UTF-8')
         new_value = new_value.encode(encoding = 'UTF-8')
 
         if db_P.has_key(new_key) == False:
             db_P[new_key] = new_value
+            count+=1
+        else:
+            continue
         
         if db_S != None:
             if db_S.has_key(new_value) == False:
@@ -89,11 +104,12 @@ def create(length, seed, db_P, db_S):
                 S = db_S[new_value].decode(encoding = 'UTF-8')
                 S += ";;;" + new_key.decode(encoding = 'UTF-8')
                 db_S[new_value] =  S.encode(encoding = 'UTF-8')
-
+    end = datetime.datetime.now()
     print("Key :", new_key)
     print("Value:", new_value)
     print("Database Populated Successfully")
-
+    print(end-start)
+    return db_P, db_S
 # Perform a search by key
 def key(db, answer):
     search_key = input("Enter the key value you wish to search for: ") 
@@ -104,7 +120,6 @@ def key(db, answer):
         answer.write(search_key.decode(encoding ='UTF-8') + '\n')
         answer.write(data.decode(encoding = 'UTF-8') + '\n')
         answer.write('\n')
-        return
     except Exception as e:
         print(e)
         print("Key does not exist")
@@ -116,6 +131,7 @@ def data(db_P, db_S, answer):
     search_data = input("Enter the data you wish to search for: ")
     start = datetime.datetime.now()
     search_data = search_data.encode(encoding = 'UTF-8')
+    count = 0
     if db_S == None:
         try:
             for key in db_P:
@@ -130,8 +146,9 @@ def data(db_P, db_S, answer):
         
         try:
             data = db_S[search_data]
-            for key in data.split():
-                answer.write(key.decode(encoding = 'UTF-8') + '\n')
+            data = data.decode(encoding = 'UTF-8')
+            for key in data.split(";;;"):
+                answer.write(key + '\n')    
                 answer.write(search_data.decode(encoding = 'UTF-8') + '\n')
                 answer.write('\n')  
         except Exception as e:
