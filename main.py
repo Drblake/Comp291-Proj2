@@ -50,7 +50,7 @@ Please Select from the following:
         elif choice == 4:
             print("Retrieving Records with Key Range:")
             start = datetime.datetime.now()
-            keyRange(db_P, answer)
+            keyRange(db_P, answer, sys.argv[1])
             end = datetime.datetime.now()
             print(end - start)
         elif choice == 5:
@@ -63,7 +63,8 @@ Please Select from the following:
         else:
             print ("Invalid Input!")
     db_P.close()
-    db_S.close()
+    if db_S is not None:
+        db_S.close()
     os.remove("tmp/sbaergen_db")  # TODO: what happens if the file is already removed?
     answer.close()
 
@@ -139,13 +140,25 @@ def data(db_P, db_S, answer):
             print(e)
             print("Data does not exist")
 
-
 # Get Range of data
-def keyRange(db, answer, Type):
+def keyRange(db, answer, dbType):
     search_key_min = input("Enter the minimum key value you wish to search for: ").encode(encoding ='UTF-8')
     search_key_max = input("Enter the maximum key value you wish to search for: ").encode(encoding ='UTF-8')
     count = 0
-    if Type == Hash:
+    if dbType != "hash":
+        try:
+            current = db.set_location(search_key_min)
+            while current[0] < search_key_max:
+                answer.write(current[0].decode(encoding ='UTF-8') + '\n')
+                answer.write(current[1].decode(encoding = 'UTF-8') + '\n')
+                answer.write('\n')
+                count+=1  
+                current = db.next()
+        except:
+            #TODO:ADD TIMEING???
+            pass
+
+    else:
         try:
             for key in db:  # inclusive key range search
                 if key >= search_key_min and key <= search_key_max:
@@ -155,14 +168,15 @@ def keyRange(db, answer, Type):
                     answer.write(solution_key.decode(encoding ='UTF-8') + '\n')
                     answer.write(solution_data.decode(encoding = 'UTF-8') + '\n')
                     answer.write('\n')
+
             print("Number of records found is: " + str(count))
             print("Result Recorded")
             return 
         except Exception as e:
             print(e)
             print("Key does not exist")
-    else:
         
+    print(count, "entries found!")    
 
 # Destroy database, Clear Answer
 def destroy(db):  # TODO: destroy? why are we returning a new db then?
@@ -180,7 +194,7 @@ def char_generator():
 
 
 def open_db():
-    dp_S = None
+    db_S = None
     DATABASE = "tmp/sbaergen_db"
     DATABASE2 = "tmp/sbaergen_db2"
     if not os.path.exists("tmp/"):
