@@ -12,7 +12,7 @@ def main():
         "First argument creates specifies database type (btree/hash/indexfile).\n" + \
         "Quitting.")
 
-    db = open_db()
+    db_P, db_S = open_db()
     try:
         answer = open("answers", 'w')
     except Exception as e:
@@ -33,28 +33,30 @@ Please Select from the following:
 
         if choice == 1:
             print("Creating/Populating Database")
-            create(10000, 10000000, db)
+            create(10000, 10000000, db_P, db_S)
+
         elif choice == 2:
             print("Retrieving Records with Key:")
             start = datetime.datetime.now()
-            key(db, answer)
+            key(db_P, answer)
             end = datetime.datetime.now()
             print(end - start)
         elif choice == 3:
             print("Retrieving Records with Data:")
             start = datetime.datetime.now()
-            data(db, answer)
+            data(db_P, answer)
             end = datetime.datetime.now()
             print(end - start)
         elif choice == 4:
             print("Retrieving Records with Key Range:")
             start = datetime.datetime.now()
-            keyRange(db, answer)
+            keyRange(db_P, answer)
             end = datetime.datetime.now()
             print(end - start)
         elif choice == 5:
             print("Destroying Database")
-            db = destroy(db)
+            db_P = destroy(db_P)
+            db_S = destroy(db_S)
         elif choice == 6:
             print("Good Bye.")
             break
@@ -65,23 +67,32 @@ Please Select from the following:
     answer.close()
 
     
-def create(length, seed, db):
+def create(length, seed, db_P, db_S):
     random.seed(seed)
-
+    
     for value in range(length):
         new_key = ""
         new_value = ""
+
         for increment in range(integer_generator()):
             new_key += str(char_generator())
+
         for increment in range(integer_generator()):
             new_value += str(char_generator())
-        try:
-            Data = db[new_key]
-        except:
+
+        if db_P.has_key(new_key) == False:
             new_key = new_key.encode(encoding ='UTF-8')
             new_value = new_value.encode(encoding = 'UTF-8')
-            db[new_key] = new_value
-       
+            db_P[new_key] = new_value
+        
+        if db_S != None:
+            if db_S.has_key(new_value) == False:
+                new_key = new_key.encode(encoding = 'UTF-8')
+                new_value = new_value.encode(encoding = 'UTF-8')
+                db_S[new_value] = new_key
+            else:
+            
+
     print("Database Populated Successfully")
 
 
@@ -151,37 +162,33 @@ def char_generator():
 
 
 def open_db():
+    dp_S = None
     DATABASE = "tmp/sbaergen_db"
     if not os.path.exists("tmp/"):
         os.makedirs("tmp/") 
     if(str(sys.argv[1]).lower() == "btree"):     
         try:
-            db = bsddb.btopen(DATABASE, 'w')
+            db_P = bsddb.btopen(DATABASE, 'w')
         except:
-            db = bsddb.btopen(DATABASE, 'c')
+            db_P = bsddb.btopen(DATABASE, 'c')
     elif(str(sys.argv[1]).lower() == "hash"):
         try:
-            db = bsddb.hashopen(DATABASE, 'w')
+            db_P = bsddb.hashopen(DATABASE, 'w')
         except:
-            db = bsddb.hashopen(DATABASE, 'c')
+            db_P = bsddb.hashopen(DATABASE, 'c')
     elif(str(sys.argv[1]).lower() == "indexfile"):
         #TODO finish berkely db open
         try:
-            db_P = bsddb.indexopen(DATABASE, 'w')
+            db_P = bsddb.hashopen(DATABASE, 'w')
         except:
-            dp_P = bsddb.indexfile(DATABASE, 'c')
+            dp_P = bsddb.hashopen(DATABASE, 'c')
         try:
-            db_S = bsddb.indexopen(DATABASE, 'w')
+            db_S = bsddb.hashopen(DATABASE, 'w')
         except:
-            dp_S = bsddb.indexfile(DATABASE, 'c')
-        
-
-    else:
-        sys.exit("Invalid Argument. Please try again!\n" + str(sys.argv[1]).lower())
-
+            dp_S = bsddb.hashopen(DATABASE, 'c')
+        db_P.associate(db_S,callback(something,something_else))
     print("")  # put some space between info above and start of menu
-    return db
- 
+    return db_P, db_S
 
 # from sql.py in proj1
 def getNumber(message, maxLen = None, minLen = 0, maxValue = None, minValue = None):
