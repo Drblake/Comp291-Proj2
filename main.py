@@ -141,26 +141,28 @@ def data(db_P, db_S, answer):
 
 
 # Get Range of data
-def keyRange(db, answer):
+def keyRange(db, answer, Type):
     search_key_min = input("Enter the minimum key value you wish to search for: ").encode(encoding ='UTF-8')
     search_key_max = input("Enter the maximum key value you wish to search for: ").encode(encoding ='UTF-8')
     count = 0
-    try:
-        for key in db:  # inclusive key range search
-            if key >= search_key_min and key <= search_key_max:
-                count+=1
-                solution_key = key
-                solution_data = db[solution_key]
-                answer.write(solution_key.decode(encoding ='UTF-8') + '\n')
-                answer.write(solution_data.decode(encoding = 'UTF-8') + '\n')
-                answer.write('\n')
-        print("Number of records found is: " + str(count))
-        print("Result Recorded")
-        return 
-    except Exception as e:
-        print(e)
-        print("Key does not exist")
-    
+    if Type == Hash:
+        try:
+            for key in db:  # inclusive key range search
+                if key >= search_key_min and key <= search_key_max:
+                    count+=1
+                    solution_key = key
+                    solution_data = db[solution_key]
+                    answer.write(solution_key.decode(encoding ='UTF-8') + '\n')
+                    answer.write(solution_data.decode(encoding = 'UTF-8') + '\n')
+                    answer.write('\n')
+            print("Number of records found is: " + str(count))
+            print("Result Recorded")
+            return 
+        except Exception as e:
+            print(e)
+            print("Key does not exist")
+    else:
+        
 
 # Destroy database, Clear Answer
 def destroy(db):  # TODO: destroy? why are we returning a new db then?
@@ -196,9 +198,9 @@ def open_db():
     elif(str(sys.argv[1]).lower() == "indexfile"):
         #TODO finish berkely db open
         try:
-            db_P = bsddb.hashopen(DATABASE, 'w')
+            db_P = bsddb.btopen(DATABASE, 'w')
         except:
-            dp_P = bsddb.hashopen(DATABASE, 'c')
+            dp_P = bsddb.btopen(DATABASE, 'c')
         try:
             db_S = bsddb.hashopen(DATABASE2, 'w')
         except:
