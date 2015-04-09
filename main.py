@@ -44,7 +44,7 @@ Please Select from the following:
         elif choice == 3:
             print("Retrieving Records with Data:")
             start = datetime.datetime.now()
-            data(db_P, answer)
+            data(db_P, db_S, answer)
             end = datetime.datetime.now()
             print(end - start)
         elif choice == 4:
@@ -62,14 +62,16 @@ Please Select from the following:
             break
         else:
             print ("Invalid Input!")
-    db.close()
+    db_P.close()
+    db_S.close()
     os.remove("tmp/sbaergen_db")  # TODO: what happens if the file is already removed?
     answer.close()
 
     
 def create(length, seed, db_P, db_S):
     random.seed(seed)
-    
+    new_value = None
+    new_key = None
     for value in range(length):
         new_key = ""
         new_value = ""
@@ -79,21 +81,22 @@ def create(length, seed, db_P, db_S):
 
         for increment in range(integer_generator()):
             new_value += str(char_generator())
+        new_key = new_key.encode(encoding ='UTF-8')
+        new_value = new_value.encode(encoding = 'UTF-8')
 
         if db_P.has_key(new_key) == False:
-            new_key = new_key.encode(encoding ='UTF-8')
-            new_value = new_value.encode(encoding = 'UTF-8')
             db_P[new_key] = new_value
         
         if db_S != None:
             if db_S.has_key(new_value) == False:
-                new_key = new_key.encode(encoding = 'UTF-8')
-                new_value = new_value.encode(encoding = 'UTF-8')
                 db_S[new_value] = new_key
             else:
-                db_S[new_value] += ";;;" + new_key
-                 
+                S = db_S[new_value].decode(encoding = 'UTF-8')
+                S += ";;;" + new_key.decode(encoding = 'UTF-8')
+                db_S[new_value] =  S.encode(encoding = 'UTF-8')
 
+    print("Key :", new_key)
+    print("Value:", new_value)
     print("Database Populated Successfully")
 
 
@@ -111,18 +114,30 @@ def key(db, answer):
         print("Key does not exist")
 
 
-def data(db, answer):
+def data(db_P, db_S, answer):
     search_data = input("Enter the data you wish to search for: ")
     search_data = search_data.encode(encoding = 'UTF-8')
-    try:
-        for key in db:
-            if db[key] == search_data:
-                answer.write(key.decode(encoding ='UTF-8') + '\n')
+    if db_S == None:
+        try:
+            for key in db_P:
+                if db_P[key] == search_data:
+                    answer.write(key.decode(encoding ='UTF-8') + '\n')
+                    answer.write(search_data.decode(encoding = 'UTF-8') + '\n')
+                    answer.write('\n')
+        except Exception as e:
+            print(e)
+            print("Data does not exist")
+    else:
+        
+        try:
+            data = db_S[search_data]
+            for key in data.split():
+                answer.write(key.decode(encoding = 'UTF-8') + '\n')
                 answer.write(search_data.decode(encoding = 'UTF-8') + '\n')
-                answer.write('\n')
-    except Exception as e:
-        print(e)
-        print("Data does not exist")
+                answer.write('\n')  
+        except Exception as e:
+            print(e)
+            print("Data does not exist")
 
 
 # Get Range of data
@@ -165,6 +180,7 @@ def char_generator():
 def open_db():
     dp_S = None
     DATABASE = "tmp/sbaergen_db"
+    DATABASE2 = "tmp/sbaergen_db2"
     if not os.path.exists("tmp/"):
         os.makedirs("tmp/") 
     if(str(sys.argv[1]).lower() == "btree"):     
@@ -184,10 +200,9 @@ def open_db():
         except:
             dp_P = bsddb.hashopen(DATABASE, 'c')
         try:
-            db_S = bsddb.hashopen(DATABASE, 'w')
+            db_S = bsddb.hashopen(DATABASE2, 'w')
         except:
-            dp_S = bsddb.hashopen(DATABASE, 'c')
-        db_P.associate(db_S,callback(something,something_else))
+            dp_S = bsddb.hashopen(DATABASE2, 'c')
     print("")  # put some space between info above and start of menu
     return db_P, db_S
 
