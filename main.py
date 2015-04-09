@@ -175,7 +175,7 @@ def keyRange(db, answer, dbType):
         except Exception as e:
             print(e)
             print("Key does not exist")
-        
+    
     print(count, "entries found!")    
 
 # Destroy database, Clear Answer
