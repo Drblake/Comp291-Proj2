@@ -12,7 +12,8 @@ def main():
         "First argument creates specifies database type (btree/hash/indexfile).\n" + \
         "Quitting.")
 
-    db_P, db_S = open_db()
+    db_P = open_db()
+    db_S = open_db()
     try:
         answer = open("answers", 'w')
     except Exception as e:
@@ -59,6 +60,7 @@ Please Select from the following:
             db_S = destroy(db_S)
         elif choice == 6:
             print("Good Bye.")
+            
             break
         else:
             print ("Invalid Input!")
@@ -167,8 +169,9 @@ def keyRange(db, answer, Type):
 
 # Destroy database, Clear Answer
 def destroy(db):  # TODO: destroy? why are we returning a new db then?
-    db.close()
-    db = open_db()
+    if db is not None:
+        db.close()
+        db = open_db()
     return db
     
 
