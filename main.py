@@ -50,7 +50,7 @@ Please Select from the following:
         elif choice == 4:
             print("Retrieving Records with Key Range:")
             start = datetime.datetime.now()
-            keyRange(db_P, answer)
+            keyRange(db_P, db_S, answer)
             end = datetime.datetime.now()
             print(end - start)
         elif choice == 5:
@@ -63,7 +63,8 @@ Please Select from the following:
         else:
             print ("Invalid Input!")
     db_P.close()
-    db_S.close()
+    if db_S is not None:
+        db_S.close()
     os.remove("tmp/sbaergen_db")  # TODO: what happens if the file is already removed?
     answer.close()
 
@@ -162,7 +163,7 @@ def keyRange(db, answer, Type):
             print(e)
             print("Key does not exist")
     else:
-        
+        pass
 
 # Destroy database, Clear Answer
 def destroy(db):  # TODO: destroy? why are we returning a new db then?
@@ -180,7 +181,7 @@ def char_generator():
 
 
 def open_db():
-    dp_S = None
+    db_S = None
     DATABASE = "tmp/sbaergen_db"
     DATABASE2 = "tmp/sbaergen_db2"
     if not os.path.exists("tmp/"):
