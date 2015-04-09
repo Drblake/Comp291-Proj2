@@ -91,7 +91,8 @@ def create(length, seed, db_P, db_S):
                 new_value = new_value.encode(encoding = 'UTF-8')
                 db_S[new_value] = new_key
             else:
-            
+                db_S[new_value] += ";;;" + new_key
+                 
 
     print("Database Populated Successfully")
 
