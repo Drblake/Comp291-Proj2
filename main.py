@@ -12,8 +12,7 @@ def main():
         "First argument creates specifies database type (btree/hash/indexfile).\n" + \
         "Quitting.")
 
-    db_P = open_db()
-    db_S = open_db()
+    db_P, db_S = open_db()
     try:
         answer = open("answers", 'w')
     except Exception as e:
@@ -38,26 +37,16 @@ Please Select from the following:
 
         elif choice == 2:
             print("Retrieving Records with Key:")
-            start = datetime.datetime.now()
             key(db_P, answer)
-            end = datetime.datetime.now()
-            print(end - start)
         elif choice == 3:
             print("Retrieving Records with Data:")
-            start = datetime.datetime.now()
             data(db_P, db_S, answer)
-            end = datetime.datetime.now()
-            print(end - start)
         elif choice == 4:
             print("Retrieving Records with Key Range:")
-            start = datetime.datetime.now()
             keyRange(db_P, answer, sys.argv[1])
-            end = datetime.datetime.now()
-            print(end - start)
         elif choice == 5:
             print("Destroying Database")
-            db_P = destroy(db_P)
-            db_S = destroy(db_S)
+            db_P, db_S = destroy(db_P, db_S)
         elif choice == 6:
             print("Good Bye.")
             
@@ -104,7 +93,8 @@ def create(length, seed, db_P, db_S):
 
 
 def key(db, answer):
-    search_key = input("Enter the key value you wish to search for: ")               
+    search_key = input("Enter the key value you wish to search for: ") 
+    start = datetime.datetime.now()
     search_key = search_key.encode(encoding ='UTF-8')
     try:
         data = db[search_key]
@@ -115,10 +105,13 @@ def key(db, answer):
     except Exception as e:
         print(e)
         print("Key does not exist")
+    end = datetime.datetime.now()
+    print(end - start)
 
 
 def data(db_P, db_S, answer):
     search_data = input("Enter the data you wish to search for: ")
+    start = datetime.datetime.now()
     search_data = search_data.encode(encoding = 'UTF-8')
     if db_S == None:
         try:
@@ -141,11 +134,14 @@ def data(db_P, db_S, answer):
         except Exception as e:
             print(e)
             print("Data does not exist")
+    end = datetime.datetime.now()
+    print(end - start)
 
 # Get Range of data
 def keyRange(db, answer, dbType):
     search_key_min = input("Enter the minimum key value you wish to search for: ").encode(encoding ='UTF-8')
     search_key_max = input("Enter the maximum key value you wish to search for: ").encode(encoding ='UTF-8')
+    start = datetime.datetime.now()
     count = 0
     if dbType != "hash":
         try:
@@ -173,19 +169,21 @@ def keyRange(db, answer, dbType):
 
             print("Number of records found is: " + str(count))
             print("Result Recorded")
-            return 
         except Exception as e:
             print(e)
             print("Key does not exist")
     
-    print(count, "entries found!")    
+    print(count, "entries found!")   
+    end = datetime.datetime.now()
+    print(end - start)
 
 # Destroy database, Clear Answer
-def destroy(db):  # TODO: destroy? why are we returning a new db then?
-    if db is not None:
-        db.close()
-        db = open_db()
-    return db
+def destroy(db_P, db_S):  # TODO: destroy? why are we returning a new db then?
+    if db_P is not None:
+        db_P.close()
+    if db_S is not None:
+        db_S.close()
+    return open_db()
     
 
 def integer_generator():
