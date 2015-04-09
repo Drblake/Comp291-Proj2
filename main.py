@@ -18,6 +18,7 @@ def main():
     except Exception as e:
         print(e)
 
+# Display main menu and get selection
     while(True):
         print(
 """----------------------------------------
@@ -49,10 +50,11 @@ Please Select from the following:
             db_P, db_S = destroy(db_P, db_S)
         elif choice == 6:
             print("Good Bye.")
-            
             break
         else:
             print ("Invalid Input!")
+
+# Destroy databases and close answer file before finishing
     db_P.close()
     if db_S is not None:
         db_S.close()
@@ -60,6 +62,7 @@ Please Select from the following:
     answer.close()
 
     
+# TODO: Should we be creating the databases in this function?
 def create(length, seed, db_P, db_S):
     random.seed(seed)
     new_value = None
@@ -91,7 +94,7 @@ def create(length, seed, db_P, db_S):
     print("Value:", new_value)
     print("Database Populated Successfully")
 
-
+# Perform a search by key
 def key(db, answer):
     search_key = input("Enter the key value you wish to search for: ") 
     start = datetime.datetime.now()
@@ -108,7 +111,7 @@ def key(db, answer):
     end = datetime.datetime.now()
     print(end - start)
 
-
+# Perform a search by data
 def data(db_P, db_S, answer):
     search_data = input("Enter the data you wish to search for: ")
     start = datetime.datetime.now()
@@ -153,7 +156,6 @@ def keyRange(db, answer, dbType):
                 count+=1  
                 current = db.next()
         except:
-            #TODO:ADD TIMEING???
             pass
 
     else:
@@ -186,14 +188,15 @@ def destroy(db_P, db_S):  # TODO: destroy? why are we returning a new db then?
     return open_db()
     
 
+# Get random integer between 64 and 127 inclusive
 def integer_generator():
     return random.randint(64,127)
 
-
+# Get random char between ASCII value 97 and 122 inclusive
 def char_generator():
     return chr(random.randint(97,122))
 
-
+# Open the database(s)
 def open_db():
     db_S = None
     DATABASE = "tmp/sbaergen_db"
